@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Up Down Left Right - Vintage Games</title>
+        <link rel="stylesheet" type="text/css" href="main.css"/>
+        <meta charset="UTF-8">
+        <meta name="description" content="website for the sale of vintage video games">
+        <meta name="keywords" content="video games, NES, SNES, Sega, Playstation, N64">
+        <meta name="author" content="Justin K">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+
+    <body>
+        <header>
+            <!--website title-->
+
+            <h1>Up Down Left Right - Vintage Games</h1>
+
+            <!--list of consoles-->
+
+            <nav id="consoles" class="console-list">
+
+                <h2>PSX  </h2>
+                <h2>N64  </h2>
+                <h2>Sega  </h2>
+                <h2>NES  </h2>
+                <h2>SNES</h2>
+
+            </nav>
+
+            <!--filter games by console select-->
+
+            <select id="console-select-filter" class="dd" onclick="filterByConsole();">
+                
+                <option value="all" selected>All Consoles</option>
+                <option value="playstation">PlayStation</option>
+                <option value="sega">Sega Genesis</option>
+                <option value="snes">Super Nintendo</option>
+                <option value="nes">Nintendo</option>
+                <option value="n64">Nintendo 64</option>
+
+            </select>
+
+            <!--currency selection-->
+            
+            <select id="currency-select" class="dd" onclick="">
+
+                <option value="CAD" selected>CAD</option>
+                <option value="USD">USD</option>
+
+            </select>
+
+            <!--today's date-->
+            <h5 id=todaysDate></h5>
+
+        </header>
+
+        <!--divs for cart output and game output-->
+        <div id="game-parent-container">
+
+            <div id="cartOutputDiv">
+
+                <h5 id="yourCart">Your Cart:</h5>
+
+            </div>
+
+            <div id="cartTotalDiv">
+
+                <h5>Cart Total:</h5>
+                <h5 id="yourCartTotal"></h5>
+
+            </div>
+
+            <div id="gamesOutputDiv">
+
+            </div>
+
+        </div>
+
+        <!--footer section-->
+        <footer class="footer">
+            <p>Contact</p>
+            <p><a href="mailto:justink@example.ca">justink@example.ca</a></p>
+        </footer>
+
+        <!--JavaScript-->
+        <script>
+
+            // JavaScript written by Justin K - Dec 2020
+
+            
+            // global variables
+
+                
+            var cartItems = [];
+            var gameStorageArray = [];
+            
+            var theItemsOutputDiv = document.getElementById("items");
+
+            var todaysDate = new Date();
+            const hst = 1.13;
+
+            
+            // game review arrays
+
+            var metalGearReviews = ["Best Game Ever!  ", "10/10!  ", "Couldn't Stop Playing!!!  "];
+            var parasiteEveReviews = ["Scary!  ", "Excellent RPG!  ", "9.5/10  "];
+            var ff7Reviews = ["Masterpiece!  ", "Game of the Decade!  ", "10/10  "];
+
+            var mk2Reviews = ["Addictive!  ", "8.5/10  "];
+            var earthwormReviews = ["Funny and Fun!  ", "8/10!  "];
+            var sonicReviews = ["Classic Hedgehog  ", "Fast Pace Fun!  "];
+
+            var kirbysReviews = ["Ahead of it's Time", "So much fun!"];
+            var megaman4Reviews = ["Great Game!", "Capcom does it again!"];
+            var spidermanReviews = ["Too good!", "8/10"];
+
+            var donkeyKongReviews = ["Top 5 on SNES!", "Beautiful graphics for it's time"];
+            var superMarioWorldReviews = ["Love playing as Yoshi!!!", "10/10"];
+            var killerInstinctReviews = ["150 hit COMBO! Amazing!", "So much Fun!"];
+
+            var goldenEyeReviews = ["Speechless!", "FPS of the decade!"];
+            var waveRaceReviews = ["Fun for the whole family!"];
+            var turokReviews = ["Best Dino Game!", "Loads of FUN!!!!"];
+
+                
+            // constructor for games
+
+            function Game(id, name, price, qtyOnHand, maxPerCustomer, category, shippingCost, reviews, description, image)
+            {
+                this.id = id;                          // string
+                this.name = name;                      // string
+                this.price = price;                    // number
+                this.qtyOnHand = qtyOnHand;            // number      
+                this.maxPerCustomer = maxPerCustomer;  // number
+                this.category = category;              // string
+                this.shippingCost = shippingCost;      // number
+                this.reviews = reviews;                // array
+                this.description = description;        // string
+                this.image = image;                    // string
+            }
+
+
+            // create some games and add to gameStorage array
+
+            gameStorageArray.push( new Game("psx-1", "Metal Gear Solid", 100, 5, 1, "playstation", 10, metalGearReviews, "Metal Gear Solid is a stealth game developed by Konami and released for the PlayStation in 1998. It was directed, produced, and written by Hideo Kojima, and follows the MSX2 video games Metal Gear and Metal Gear 2: Solid Snake, which Kojima also worked on.", "games/metal gear solid.jpg") );
+            gameStorageArray.push( new Game("psx-2", "Parasite Eve", 100, 5, 1, "playstation", 10, parasiteEveReviews, "Parasite Eve is an action role-playing video game with survival horror elements. Movement in the world map (which is a map of Manhattan) is limited to specific destinations. Upon the player walking over a hot spot, there's a chance of a random encounter.", "games/Parasite Eve.png") );
+            gameStorageArray.push( new Game("psx-3", "Final Fantasy VII", 100, 2, 1, "playstation", 10, ff7Reviews, "Final Fantasy VII follows the story of mercenary Cloud Strife, who is hired by the eco-terrorist group AVALANCHE—led by Barret Wallace—to help fight the mega-corporation Shinra Electric Power Company, who attempts to drain the planet's lifeblood as an energy source to further their profits.", "games/Final_Fantasy_VII_Box_Art.jpg") );
+
+            gameStorageArray.push( new Game("sega-1", "Mortal Kombat II", 90, 5, 1, "sega", 10, mk2Reviews, "Mortal Kombat II was the second game in the Mortal Kombat series, improving the gameplay and expanding the mythos of the original Mortal Kombat, notably introducing more varied finishing moves (including several Fatalities per character and new finishers, such as Babality and Friendship) and several iconic characters", "games/gen_mortal_kombat_ii_p_kdnuii.jpg") );
+            gameStorageArray.push( new Game("sega-2", "Earthworm Jim", 100, 3, 1, "sega", 10, earthwormReviews, "Earthworm Jim is a 1994 run and gun platform game developed by Shiny Entertainment, featuring an earthworm named Jim, who wears a robotic suit and battles evil. The game was released for the Sega Genesis, and subsequently ported to a number of other video game consoles.", "games/gen_earthworm_jim_p_kls85p.jpg") );
+            gameStorageArray.push( new Game("sega-3", "Sonic the Hedgehog 2", 100, 5, 1, "sega", 10, sonicReviews, "Sonic the Hedgehog 2 is a 2D side-scrolling platform game. The game stars Sonic the Hedgehog and his sidekick, Miles Tails Prower, who is described as having idolized Sonic as a child and wanting to keep up with him. At the game's start, the player can select to either play as Sonic, Tails, or both.", "games/Sonic_2_US_Cover.jpg") );
+
+            gameStorageArray.push( new Game("nes-1", "Kirby's Adventure", 100, 5, 1, "nes", 10, kirbysReviews, "Kirby's Adventure is a 1993 platform game developed by HAL Laboratory and published by Nintendo for the Nintendo Entertainment System (NES). ... The game centers around Kirby traveling across Dream Land to repair the Star Rod after King Dedede breaks it apart and gives the pieces to his minions.", "games/Kirby's_Adventure_Coverart.png") );
+            gameStorageArray.push( new Game("nes-2", "Mega Man 4", 100, 5, 1, "nes", 10, megaman4Reviews, "Mega Man 4 is an action-platform game developed by Capcom for the Nintendo Entertainment System. It is the fourth game in the original Mega Man series and was originally released in Japan in 1991. The game was localized in North America the following January, and in Europe in 1993.", "games/220px-Megaman4_box.jpg") );
+            gameStorageArray.push( new Game("nes-3", "Spiderman and the Return of the Sinister Six", 100, 5, 1, "nes", 10, spidermanReviews, "The player controls Spider-Man through six side-scrolling levels, with a member of the Sinister Six (Electro, Sandman, Mysterio, Vulture, Hobgoblin, and Doctor Octopus) at the end of each level as a boss. Spider-Man can jump, punch, kick, duck, climb certain walls and trees, shoot webs to swing on and collect web fluid to shoot square web projectiles.", "games/220px-Spiderman_return_of_the_sinister_six_NES.jpg") );
+
+            gameStorageArray.push( new Game("snes-1", "Donkey Kong Country", 100, 5, 1, "snes", 10, donkeyKongReviews, "Donkey Kong Country is a side-scrolling platform game in which the player must complete 40 levels to recover the Kongs' banana hoard, which has been stolen by the crocodilian Kremlings. ... In Team mode, each player takes the role of one of the two Kongs and play as a tag team.", "games/dkc.jpg") );
+            gameStorageArray.push( new Game("snes-2", "Super Mario World", 100, 4, 1, "snes", 10, superMarioWorldReviews, "Super Mario World is a 1990 platform game developed by Nintendo for the Super Nintendo Entertainment System (SNES). The story follows Mario's quest to save Princess Peach and Dinosaur Land from the series' antagonist Bowser and his minions, the Koopalings.", "games/Super_Mario_World_Coverart.png") );
+            gameStorageArray.push( new Game("snes-3", "Killer Instinct", 100, 3, 1, "snes", 10, killerInstinctReviews, "Killer Instinct is a fighting video game developed by Rare and published by Midway. It was released as an arcade game in the fall of 1994 and, the following year, ported to the Super Nintendo Entertainment System and the Game Boy. The game's plot involves an all-powerful corporation organizing a fighting", "games/snes_killer_instinct_p_8fbv6j.jpg") );
+
+            gameStorageArray.push( new Game("n64-1", "Goldeneye 007", 100, 5, 1, "n64", 10, goldenEyeReviews, "GoldenEye 007 is a first-person shooter that features both single and multiplayer modes. In the single-player mode, the player takes the role of James Bond through a series of free-roaming 3D levels. ... For example, in one level, the electromagnetic watch from Live and Let Die is used to acquire a jail cell key.", "games/GoldenEye007box.jpg") );
+            gameStorageArray.push( new Game("n64-2", "Wave Race 64", 90, 5, 1, "n64", 10, waveRaceReviews, "Wave Race 64 is a racing game in which players race on Jet Skis in different weather conditions and on a variety of courses. The game features three single-player modes (Championship, Time Trials, and Stunt Mode) as well as a multiplayer mode for competitive play.", "games/Wave_Race_64_(NA).png") );
+            gameStorageArray.push( new Game("n64-3", "Turok: Dinosaur Hunter", 100, 5, 1, "n64", 10, turokReviews, "Turok: Dinosaur Hunter is a first-person shooter video game developed by Iguana Entertainment and published by Acclaim for the Nintendo 64 console and Microsoft Windows. It was released in 1997 in North America and Europe. Turok is an adaptation of the Acclaim Comics comic book series of the same name. The player controls Turok, a Native American warrior, who must stop the evil Campaigner from conquering the universe with an ancient and powerful weapon.", "games/Turok-dinosaur_hunter_n64_cover.png") );
+
+
+            // function to display games
+
+            function displayGames(games)
+            {
+                var theDiv = document.getElementById("gamesOutputDiv");
+                theDiv.innerHTML = "";
+
+                for (var i = 0; i < games.length; i++)
+                {
+                    var tempDiv = document.createElement("div");
+
+                    tempDiv.id = "singleGameContainer";
+
+                    // create element for each game property
+
+                    // name
+
+                    var tempName = document.createElement("h3");
+                    tempName.innerHTML = games[i].name;  
+                    tempDiv.appendChild(tempName);
+
+
+                    // id
+
+                    var tempId = document.createElement("p");
+                    tempId.innerHTML = "Game-ID: " + games[i].id;  
+                    tempDiv.appendChild(tempId);
+
+
+                    // image
+
+                    var tempImage = document.createElement("img");
+                    tempImage.setAttribute("class", "img-size");
+                    tempImage.src = games[i].image;  
+                    tempDiv.appendChild(tempImage);
+
+
+                    // price
+
+                    var tempPrice = document.createElement("p");
+                    tempPrice.innerHTML = "Price: $" + games[i].price;  
+                    tempDiv.appendChild(tempPrice);
+
+
+                    // on hand qty
+
+                    var tempQty = document.createElement("p");
+                    tempQty.innerHTML = "Stock: " + games[i].qtyOnHand;  
+                    tempDiv.appendChild(tempQty);
+
+
+                    // max per customer
+
+                    var tempMaxPerCustomer = document.createElement("p");
+                    tempMaxPerCustomer.innerHTML = "Max Per Customer: " + games[i].maxPerCustomer;  
+                    tempDiv.appendChild(tempMaxPerCustomer);
+
+
+                    // category
+
+                    var tempCategory = document.createElement("p");
+                    tempCategory.innerHTML = games[i].category; 
+                    tempCategory.innerHTML = "";
+                    tempDiv.appendChild(tempCategory);
+
+
+                    // shipping cost
+
+                    var tempShipping = document.createElement("p");
+                    tempShipping.innerHTML = "$" + games[i].shippingCost + " shipping (North America)";  
+                    tempDiv.appendChild(tempShipping);
+
+
+                    // description
+
+                    var tempDescription = document.createElement("p");
+                    tempDescription.innerHTML = games[i].description;  
+                    tempDiv.appendChild(tempDescription);
+
+
+                    // reviews
+
+                    var tempReviews = document.createElement("p");
+                    tempReviews.innerHTML = "Reviews: " + games[i].reviews;  
+                    tempDiv.appendChild(tempReviews);
+
+
+                    // add to cart button
+
+                    var tempAddToCart = document.createElement("input");
+                    tempAddToCart.type = "button";
+                    tempAddToCart.value = "Add to Cart";
+
+                    // set the games id to the id of the button
+                    tempAddToCart.id = games[i].id;
+
+                    // Add event listener to button 
+                    tempAddToCart.addEventListener("click", addToCart);
+                    
+                    tempDiv.appendChild(tempAddToCart);
+                    theDiv.appendChild(tempDiv);    
+
+                }
+
+            } 
+
+
+            // Button Handler
+
+            var addToCart = function (e) 
+            {
+                e.preventDefault();
+
+                console.log(e.target.id); 
+
+                cartItems.push(getGameById(e.target.id));
+
+                console.log(cartItems);
+
+                // display cart items
+                displayCartItems();
+                
+                // display cart items added up with HST
+                displayCartTotal();
+            }
+
+
+            // function to get game object by id
+
+            function getGameById(id) 
+            {
+
+                // loop through games array to compare id's
+
+                for(var i = 0; i < gameStorageArray.length; i++) 
+                {
+                    if (gameStorageArray[i].id == id) 
+                    {
+                        return gameStorageArray[i];
+                    }
+                }
+                
+                // return null if no match
+                return null;
+            }
+
+
+            // display all games
+
+            displayGames(gameStorageArray);
+
+
+            // function to filter games by console type
+
+            function filterByConsole()
+            {
+
+                // gather user selection
+
+                var selectConsole = document.getElementById("console-select-filter").value;
+
+                
+                // filtered games array
+
+                var filteredGamesArray = [];
+
+
+                // loop through every game in the game storage that matches the users selection from the dropdown
+
+                var i = 0;
+                
+                while(i < gameStorageArray.length)
+                {
+                    if (gameStorageArray[i].category == selectConsole)
+                    {
+                        filteredGamesArray.push( gameStorageArray[i] );
+                    }
+                    
+                    i++;
+                } 
+
+                displayGames(filteredGamesArray);
+            }
+
+            
+            // function to display cart items
+
+            function displayCartItems()
+            {
+                var cartOutputDiv = document.getElementById("cartOutputDiv");
+                
+                var tempPtag = document.createElement("p");
+                tempPtag.id = "cartList";
+                
+                for (i = 0; i < cartItems.length; i++)
+                {
+                    tempPtag.innerHTML = cartItems[i].name + " $" + cartItems[i].price + " - ";
+                }
+
+                cartOutputDiv.appendChild(tempPtag);
+            }
+
+            
+            // function to display today's date
+
+            function displayDate()
+            {
+                document.getElementById("todaysDate").innerHTML = todaysDate;
+            }
+
+            // display date
+
+            displayDate();
+
+
+            // function to display cart total
+
+            function displayCartTotal()
+            {
+                var cartTotal = document.getElementById("yourCartTotal");
+                var totalOfGamesArray = [];
+
+                for(i = 0; i < cartItems.length; i++)
+                {
+                    totalOfGamesArray.push( cartItems[i].price );
+                }
+
+                var sum = totalOfGamesArray.reduce(function(a, b)
+                {
+                return a + b;
+                }, 0);
+
+                var totalToDisplay = sum * hst;
+                cartTotal.innerHTML = "$" + totalToDisplay.toFixed(2) + "(Tax Included)";
+                
+            }
+
+            displayCartTotal();
+           
+
+        </script>
+    </body>
+</html>
+
